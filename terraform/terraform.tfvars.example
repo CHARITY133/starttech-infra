@@ -1,0 +1,21 @@
+# Copy this file to terraform.tfvars and fill in real values.
+# terraform.tfvars is gitignored - never commit real credentials or ARNs that
+# you consider sensitive.
+
+aws_region = "us-east-1"
+
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs = ["10.0.11.0/24", "10.0.12.0/24"]
+
+eks_cluster_version = "1.34"
+
+# Leave blank for the FIRST apply (networking/eks/storage/database only).
+# After deploying k8s/ingress.yaml and the AWS Load Balancer Controller,
+# fetch the ALB hostname and put it here, then re-run `terraform apply`.
+alb_dns_name = ""
+
+# Leave blank until after the cdn module has created the distribution once.
+# Then copy its ARN here (terraform output cloudfront_distribution_id / check
+# AWS console) and re-apply so the S3 bucket policy locks down to CloudFront.
+cloudfront_distribution_arn = ""
