@@ -11,15 +11,6 @@ terraform {
       version = "~> 3.6"
     }
   }
-
-  # Recommended: use a remote backend (S3 + DynamoDB lock table) instead of local state.
-  # backend "s3" {
-  #   bucket         = "starttech-tfstate-<your-unique-suffix>"
-  #   key            = "starttech-infra/terraform.tfstate"
-  #   region         = "us-east-1"
-  #   dynamodb_table = "starttech-tfstate-lock"
-  #   encrypt        = true
-  # }
 }
 
 provider "aws" {
@@ -44,36 +35,17 @@ module "eks" {
   source = "./modules/eks"
 
   cluster_version     = var.eks_cluster_version
+  node_instance_types = var.node_instance_types
   public_subnet_ids   = module.networking.public_subnet_ids
   private_subnet_ids  = module.networking.private_subnet_ids
 }
 
 ############################################
 # Storage (S3 frontend bucket + ECR)
-#
-# NOTE ON TWO-PASS APPLY:
-# The S3 bucket policy needs the CloudFront distribution ARN, and CloudFront
-# needs the S3 bucket's domain name -> no circular dependency there (S3 is
-# created first, CDN references it). But CloudFront ALSO needs the ALB's DNS
-# name, and the ALB is created by the AWS Load Balancer Controller running
-# INSIDE the cluster (via k8s/ingress.yaml), which only exists after you've
-# deployed the app. So the flow is:
-#   1. terraform apply -target=module.networking -target=module.eks \
-#        -target=module.storage -target=module.database
-#   2. Deploy the AWS Load Balancer Controller + kubectl apply -f k8s/
-#      (creates the ALB) and grab its DNS name:
-#        kubectl get ingress backend-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
-#   3. Set alb_dns_name in terraform.tfvars to that value and run
-#      `terraform apply` again to create/update the CloudFront distribution
-#      and attach the S3 bucket policy.
-# This is expected and is documented in scripts/deploy-infrastructure.sh.
 ############################################
 module "storage" {
   source = "./modules/storage"
 
-  # Set this in terraform.tfvars AFTER the first apply, once module.cdn
-  # has created the distribution and you've copied its ARN. Avoids a
-  # storage<->cdn circular module dependency (see two-pass note above).
   cloudfront_distribution_arn = var.cloudfront_distribution_arn
 }
 
@@ -94,7 +66,7 @@ module "cdn" {
 module "database" {
   source = "./modules/database"
 
-  vpc_id                         = module.networking.vpc_id
-  private_subnet_ids             = module.networking.private_subnet_ids
-  eks_cluster_security_group_id  = module.eks.cluster_security_group_id
+  vpc_id                        = module.networking.vpc_id
+  private_subnet_ids            = module.networking.private_subnet_ids
+  eks_cluster_security_group_id = module.eks.cluster_security_group_id
 }

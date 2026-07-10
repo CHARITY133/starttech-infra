@@ -23,7 +23,11 @@ variable "eks_cluster_version" {
   type    = string
   default = "1.34"
 }
-
+variable "node_instance_types" {
+  description = "EC2 instance types for the EKS managed node group. Brief specifies t3.medium — override to a free-tier type only if your AWS account is Free Tier restricted, then switch back before final submission."
+  type        = list(string)
+  default     = ["t3.medium"]
+}
 variable "alb_dns_name" {
   description = "DNS name of the backend ALB. Leave empty on first apply (CDN module is skipped); set after k8s Ingress creates the ALB, then re-apply."
   type        = string
