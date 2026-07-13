@@ -12,7 +12,7 @@ resource "aws_cloudfront_origin_access_control" "s3_oac" {
 resource "aws_cloudfront_distribution" "this" {
   enabled             = true
   default_root_object = "index.html"
-  comment              = "StartTech unified CDN - frontend + backend API"
+  comment             = "StartTech unified CDN - frontend + backend API"
 
   # ---------------- Origin 1: S3 (React frontend) ----------------
   origin {
@@ -28,18 +28,18 @@ resource "aws_cloudfront_distribution" "this" {
 
     custom_origin_config {
       http_port              = 80
-      https_port              = 443
-      origin_protocol_policy   = "http-only"
-      origin_ssl_protocols     = ["TLSv1.2"]
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 
   # ---------------- Default Behavior: Serve React app from S3 ----------------
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods          = ["GET", "HEAD"]
-    target_origin_id        = "S3-Frontend"
-    viewer_protocol_policy  = "redirect-to-https"
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "S3-Frontend"
+    viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
       query_string = false
@@ -55,11 +55,11 @@ resource "aws_cloudfront_distribution" "this" {
 
   # ---------------- Ordered Behavior: /api/* -> ALB, no caching ----------------
   ordered_cache_behavior {
-    path_pattern            = "/api/*"
-    allowed_methods         = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods           = ["GET", "HEAD"]
-    target_origin_id         = "ALB-Backend"
-    viewer_protocol_policy    = "redirect-to-https"
+    path_pattern           = "/api/*"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "ALB-Backend"
+    viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
       query_string = true

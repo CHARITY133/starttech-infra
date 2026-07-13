@@ -91,7 +91,7 @@ module "cdn" {
 module "database" {
   source = "./modules/database"
 
-  vpc_id                         = module.networking.vpc_id
-  private_subnet_ids             = module.networking.private_subnet_ids
-  eks_cluster_security_group_id  = module.eks.cluster_security_group_id
+  vpc_id                        = module.networking.vpc_id
+  private_subnet_ids            = module.networking.private_subnet_ids
+  eks_cluster_security_group_id = module.eks.cluster_security_group_id
 }

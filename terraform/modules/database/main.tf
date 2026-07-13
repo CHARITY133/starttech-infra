@@ -35,11 +35,11 @@ resource "aws_security_group" "starttech_redis" {
 resource "aws_elasticache_cluster" "starttech_redis" {
   cluster_id           = "starttech-redis"
   engine               = "redis"
-  engine_version        = "7.1"
-  node_type             = "cache.t3.micro"
-  num_cache_nodes       = 1
+  engine_version       = "7.1"
+  node_type            = "cache.t3.micro"
+  num_cache_nodes      = 1
   parameter_group_name = "default.redis7"
-  port                  = 6379
+  port                 = 6379
 
   subnet_group_name  = aws_elasticache_subnet_group.starttech_redis.name
   security_group_ids = [aws_security_group.starttech_redis.id]

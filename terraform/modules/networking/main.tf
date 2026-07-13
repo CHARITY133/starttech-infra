@@ -33,9 +33,9 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name                                        = "starttech-public-${count.index + 1}"
-    "kubernetes.io/role/elb"                    = "1"
-    "kubernetes.io/cluster/starttech-cluster"   = "shared"
+    Name                                      = "starttech-public-${count.index + 1}"
+    "kubernetes.io/role/elb"                  = "1"
+    "kubernetes.io/cluster/starttech-cluster" = "shared"
   }
 }
 
@@ -47,9 +47,9 @@ resource "aws_subnet" "private" {
   availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name                                        = "starttech-private-${count.index + 1}"
-    "kubernetes.io/role/internal-elb"           = "1"
-    "kubernetes.io/cluster/starttech-cluster"   = "shared"
+    Name                                      = "starttech-private-${count.index + 1}"
+    "kubernetes.io/role/internal-elb"         = "1"
+    "kubernetes.io/cluster/starttech-cluster" = "shared"
   }
 }
 
