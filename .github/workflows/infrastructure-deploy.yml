@@ -21,6 +21,10 @@ jobs:
     defaults:
       run:
         working-directory: terraform
+    env:
+      TF_VAR_alb_dns_name: ${{ vars.TF_VAR_ALB_DNS_NAME }}
+      TF_VAR_cloudfront_distribution_arn: ${{ vars.TF_VAR_CLOUDFRONT_DISTRIBUTION_ARN }}
+      TF_VAR_node_instance_types: ${{ vars.TF_VAR_NODE_INSTANCE_TYPES }}
 
     steps:
       - name: Checkout
